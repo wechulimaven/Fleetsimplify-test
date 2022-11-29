@@ -1,0 +1,9 @@
+{
+  "@@locale": "fr",
+  "appName": "Sendy Fulfilment Seller Fr",
+  "errorConnectingToServer": "Une erreur s'est produite lors de la tentative de connexion à nos serveurs",
+  "errorProcessingYourRequest": "Il semble que quelque chose s'est mal passé lors du traitement de votre demande",
+  "pageNotFound": "Page non trouvée.",
+  "internalSeverError": "Oops! Une erreur interne du serveur a été rencontrée.\\nDésolé pour le désagrément, nous y travaillons",
+  "invalidStatusCode": "Code d'état non valide reçu"
+}
