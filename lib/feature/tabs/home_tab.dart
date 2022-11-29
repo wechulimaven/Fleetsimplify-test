@@ -1,16 +1,25 @@
+// ignore_for_file: prefer_is_empty
+
+import 'package:dagizo_app/core/blocs/inspection/inspection_cubit.dart';
 import 'package:dagizo_app/feature/tabs/widgets/stepper.dart';
+import 'package:dagizo_app/feature/terms/terms_home.dart';
 import 'package:dagizo_app/shared/configs/assets.dart';
 import 'package:dagizo_app/shared/configs/colors.dart';
 import 'package:dagizo_app/shared/configs/styles.dart';
+import 'package:dagizo_app/shared/utils/toast_utils.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../core/data/dummy/chip_dummy_model.dart';
 import '../../core/data/dummy/stepper_dummy_headers.dart';
+import '../../core/di/injector.dart';
 import '../../shared/widgets/custom_text_button.dart';
 import '../../shared/widgets/default_appbar.dart';
+import '../inspection/handover_inspection.dart';
 import '../inspection/inspection_home.dart';
 
 class HomeTab extends StatefulWidget {
@@ -23,6 +32,17 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   int index = 1;
   int currentStep = 0;
+  bool? isStarted;
+  InspectionModel? inspectionModel;
+  List<InspectionModel> inspectionListModel = [];
+
+  load() {}
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -42,13 +62,24 @@ class _HomeTabState extends State<HomeTab> {
                             (i, e) => MapEntry(
                               i,
                               InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      index = i;
-                                    });
-                                  },
-                                  child: tabWidget(e.label, e.asset,
-                                      i == index ? true : false)),
+                                onTap: () {
+                                  setState(() {
+                                    index = i;
+                                  });
+                                  Fimber.e('Selected');
+                                  if (inspectionListModel[4].isAvailable !=
+                                          null &&
+                                      i == 4) {
+                                    Navigator.popAndPushNamed(
+                                        context, TermsHome.routeName);
+                                  }
+                                },
+                                child: tabWidget(
+                                  e.label,
+                                  e.asset,
+                                  i == index ? true : false,
+                                ),
+                              ),
                             ),
                           )
                           .values
@@ -66,33 +97,174 @@ class _HomeTabState extends State<HomeTab> {
                       style: Styles.normalTextStyle,
                     ),
                     SizedBox(height: 30.h),
-                    CustomStepper(
-                      // type: StepperType.vertical,
-                      currentStep: currentStep,
-                      steps: headersList
-                          .map((e) => _buildStep(
-                                title: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    e.title,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Palette.steperGreyColor),
-                                  ),
-                                ),
-                                // isActive: i == currentStep,
-                                // state: StepState.error,
-                              ))
-                          .toList(),
+                    BlocProvider(
+                      create: (context) =>
+                          inject<InspectionCubit>()..checkStatus(),
+                      child: BlocConsumer<InspectionCubit, InspectionState>(
+                        listener: (context, state) async {
+                          if (state is InspectionStatus) {
+                            setState(() {
+                              isStarted = state.isStarted;
+                            });
+                            inspectionListModel = await context
+                                    .read<InspectionCubit>()
+                                    .getSavedProgressList() ??
+                                [];
+                          }
+                        },
+                        builder: (context, state) {
+                          return CustomStepper(
+                              // type: StepperType.vertical,
+                              onStepTapped: (step) {
+                                Fimber.d('STEPPED $step');
+                                if (isStarted == null || !isStarted!) {
+                                  setState(() {
+                                    currentStep = step;
+                                    isStarted = true;
+                                    inspectionModel = inspectionList[step];
+                                  });
+                                  context.read<InspectionCubit>().saveStatus();
+                                } else {
+                                  if (inspectionListModel[step].index == 5) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      HandoverScreen.routeName,
+                                    );
+                                  }
+                                  if (inspectionListModel[step].isAvailable !=
+                                      null) {
+                                    return ToastUtils.showInfoToast(
+                                        'Progress already saved Proceed to next');
+                                  }
+                                  setState(() {
+                                    currentStep = step;
+                                    isStarted = true;
+                                    inspectionModel = inspectionListModel[step];
+                                  });
+                                  if (inspectionListModel.length > 1) {
+                                    context
+                                        .read<InspectionCubit>()
+                                        .saveProgress(inspectionListModel);
+                                  }
+                                }
+                              },
+                              currentStep: currentStep,
+                              steps: [
+                                if (inspectionListModel.length == 0)
+                                  for (var i = 0;
+                                      i < inspectionList.length;
+                                      ++i)
+                                    _buildStep(
+                                      title: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          inspectionList[i].title,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: isStarted == null ||
+                                                      !isStarted!
+                                                  ? Palette.steperGreyColor
+                                                  : i == currentStep
+                                                      ? Palette.white
+                                                      : Palette
+                                                          .steperGreyColor),
+                                        ),
+                                      ),
+                                      isActive: isStarted == null || !isStarted!
+                                          ? false
+                                          : i == currentStep,
+                                    ),
+                                if (inspectionListModel.length > 3)
+                                  for (var i = 0;
+                                      i < inspectionListModel.length;
+                                      ++i)
+                                    inspectionListModel[i].isAvailable !=
+                                                null &&
+                                            isStarted != null
+                                        ? _buildStep(
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                inspectionListModel[i].title,
+                                                style: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: Palette.white),
+                                              ),
+                                            ),
+                                            isActive: true)
+                                        : _buildStep(
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                inspectionList[i].title,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: isStarted == null ||
+                                                            !isStarted!
+                                                        ? Palette
+                                                            .steperGreyColor
+                                                        : i == currentStep
+                                                            ? Palette.white
+                                                            : Palette
+                                                                .steperGreyColor),
+                                              ),
+                                            ),
+                                            isActive:
+                                                isStarted == null || !isStarted!
+                                                    ? false
+                                                    : i == currentStep,
+                                          ),
+                                // _buildStep(
+                                //   title: Padding(
+                                //     padding: const EdgeInsets.all(8.0),
+                                //     child: Text(
+                                //       inspectionList[i].title,
+                                //       style: TextStyle(
+                                //           fontSize: 15,
+                                //           color: isStarted == null ||
+                                //                   !isStarted!
+                                //               ? Palette.steperGreyColor
+                                //               : i == currentStep
+                                //                   ? Palette.white
+                                //                   : Palette
+                                //                       .steperGreyColor),
+                                //     ),
+                                //   ),
+                                //   isActive: isStarted == null || !isStarted!
+                                //       ? false
+                                //       : i == currentStep,
+                                // ),
+                              ]);
+                        },
+                      ),
                     ),
                     SizedBox(height: 50.h),
                     CustomTextButton(
-                      text: 'Let’s begin  inspecting',
+                      text: isStarted == null || !isStarted!
+                          ? 'Let’s begin  inspecting'
+                          : 'Let’s continue where we left',
                       onTap: () {
-                        Navigator.pushNamed(context, InpectionScreen.routeName);
+                        if (inspectionModel?.index != null) {
+                          inspectionModel!.index == 5
+                              ? Navigator.pushNamed(
+                                  context,
+                                  HandoverScreen.routeName,
+                                )
+                              : Navigator.pushNamed(
+                                  context, InpectionScreen.routeName,
+                                  arguments: {'step': inspectionModel});
+                        } else {
+                          ToastUtils.showInfoToast(
+                              'kindly select your next step, before proceeding');
+                        }
                       },
                       displayLoading: false,
                       frontIcon: Assets.forward,
+                      color: isStarted == null || !isStarted!
+                          ? Palette.midGreyColor
+                          : Palette.yellowColor,
                       frontIconSize: 15,
                       fontSize: 15,
                     )

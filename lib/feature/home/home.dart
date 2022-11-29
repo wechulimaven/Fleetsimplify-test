@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../core/services/on_will_pop.dart';
 import '../tabs/calculate_tab.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/recruitment_tab.dart';
@@ -44,45 +45,48 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocProvider(
       create: (context) => BottomNavBloc(),
       child: BlocBuilder<BottomNavBloc, int>(builder: (context, state) {
-        return Scaffold(
-            // bottomSheet: orderOn! ? const OrderProgressBottomSheet() : null,
-            bottomNavigationBar: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Colors.grey,
-                selectedItemColor: Palette.yellowColor,
-                unselectedItemColor: Colors.white,
-                onTap: (index) {
-                  BlocProvider.of<BottomNavBloc>(context)
-                      .add(NavigateToAnotherTab(index));
-                },
-                currentIndex: state,
-                items: [
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset(Assets.home,
-                          color:
-                              state != 0 ? Colors.white : Palette.yellowColor,
-                          semanticsLabel: 'Home'.tr()),
-                      label: 'Home'.tr()),
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset(Assets.rate,
-                          color:
-                              state != 1 ? Colors.white : Palette.yellowColor,
-                          semanticsLabel: 'Rate a driver'),
-                      label: 'Rate a driver'.tr()),
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset(Assets.business,
-                          color:
-                              state != 2 ? Colors.white : Palette.yellowColor,
-                          semanticsLabel: 'Business'),
-                      label: 'Business'.tr()),
-                  BottomNavigationBarItem(
-                      icon: SvgPicture.asset(Assets.recruitment,
-                          color:
-                              state != 2 ? Colors.white : Palette.yellowColor,
-                          semanticsLabel: 'Recruitment'),
-                      label: 'Recruitment'.tr()),
-                ]),
-            body: getTabs()[state]);
+        return WillPopScope(
+          onWillPop: () => handleWillPop(context),
+          child: Scaffold(
+              // bottomSheet: orderOn! ? const OrderProgressBottomSheet() : null,
+              bottomNavigationBar: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  backgroundColor: Colors.grey,
+                  selectedItemColor: Palette.yellowColor,
+                  unselectedItemColor: Colors.white,
+                  onTap: (index) {
+                    BlocProvider.of<BottomNavBloc>(context)
+                        .add(NavigateToAnotherTab(index));
+                  },
+                  currentIndex: state,
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: SvgPicture.asset(Assets.home,
+                            color:
+                                state != 0 ? Colors.white : Palette.yellowColor,
+                            semanticsLabel: 'Home'.tr()),
+                        label: 'Home'.tr()),
+                    BottomNavigationBarItem(
+                        icon: SvgPicture.asset(Assets.rate,
+                            color:
+                                state != 1 ? Colors.white : Palette.yellowColor,
+                            semanticsLabel: 'Rate a driver'),
+                        label: 'Rate a driver'.tr()),
+                    BottomNavigationBarItem(
+                        icon: SvgPicture.asset(Assets.business,
+                            color:
+                                state != 2 ? Colors.white : Palette.yellowColor,
+                            semanticsLabel: 'Business'),
+                        label: 'Business'.tr()),
+                    BottomNavigationBarItem(
+                        icon: SvgPicture.asset(Assets.recruitment,
+                            color:
+                                state != 2 ? Colors.white : Palette.yellowColor,
+                            semanticsLabel: 'Recruitment'),
+                        label: 'Recruitment'.tr()),
+                  ]),
+              body: getTabs()[state]),
+        );
       }),
     );
   }

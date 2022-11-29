@@ -15,9 +15,9 @@ class Assets {
 
   // Images
   static const String balance = 'assets/images/balance.svg';
-  static const String headlight = 'assets/images/headlight.svg';
-  static const String inspection = 'assets/images/inspection_image.svg';
-  static const String jack = 'assets/images/jack.svg';
-  static const String radio = 'assets/images/radio.svg';
-  static const String wheel = 'assets/images/wheel.svg';
+  static const String headlight = 'assets/icons/headlight.png';
+  static const String inspection = 'assets/icons/inspect.png';
+  static const String jack = 'assets/icons/image.png';
+  static const String radio = 'assets/icons/radio.png';
+  static const String wheel = 'assets/icons/wh.png';
 }

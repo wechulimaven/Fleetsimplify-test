@@ -5,12 +5,15 @@ class Palette {
   static const Color blackColor = Color(0xFF3B3B3B);
   static const Color greenColor = Color(0xFF279F2C);
   static const Color accentColor = Color(0xFFBB7560);
+  static const Color accentColor2 = Color(0xFF914A9C);
   static const Color blueColor = Color(0xFF6CB0F7);
   static const Color greyColor = Color(0xFFC4C4C4);
   static const Color midGreyColor = Color(0xFFD9D9D9);
   static const Color steperGreyColor = Color(0xFF9C9A9A);
   static const Color stepperBg = Color(0xFFF2F2F2);
+  static const Color cardBg = Color(0xFF969393);
   static const Color lightGreyColor = Color(0xFFF8F8F8);
+  static const Color brownColor = Color(0xFFF5EDD6);
 
   static const Color gray90 = Color(0xFF303133);
   static const Color gray80 = Color(0xFF606266);

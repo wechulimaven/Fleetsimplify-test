@@ -56,11 +56,11 @@ class CustomTextButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 20.w,
+                    width: 15.w,
                   ),
                   backIcon != null
                       ? Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(4.0),
                           child: SvgPicture.asset(
                             backIcon!,
                             color: iconColor,
@@ -70,7 +70,7 @@ class CustomTextButton extends StatelessWidget {
                       : const SizedBox.shrink(),
                   backIcon != null ? const Spacer() : const SizedBox.shrink(),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: Text(
                       text,
                       textAlign: TextAlign.center,
@@ -80,7 +80,10 @@ class CustomTextButton extends StatelessWidget {
                           fontWeight: FontWeight.w700),
                     ),
                   ),
-                  const Spacer(),
+                  frontIcon != null ? const Spacer() : const SizedBox.shrink(),
+                  const SizedBox(
+                    width: 12,
+                  ),
                   frontIcon != null
                       ? Padding(
                           padding: const EdgeInsets.all(8.0),

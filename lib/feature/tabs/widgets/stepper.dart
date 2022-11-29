@@ -594,15 +594,16 @@ class _CustomStepperState extends State<CustomStepper>
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Palette.white),
-                      child: const Center(
-                        child: Icon(
-                          Icons.check,
-                          size: 17,
-                          color: Palette.greenColor,
-                        ),
-                      )),
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, color: Palette.white),
+                    child: const Center(
+                      child: Icon(
+                        Icons.check,
+                        size: 17,
+                        color: Palette.greenColor,
+                      ),
+                    ),
+                  ),
                 )
               : const SizedBox.shrink(),
         ],

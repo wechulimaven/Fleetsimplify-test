@@ -4,6 +4,7 @@ import 'package:dagizo_app/core/blocs/language_support_cubit/language_support_cu
 import 'package:dagizo_app/core/blocs/splash_page_cubit/splash_page_cubit.dart';
 import 'package:dagizo_app/core/data/local/shared_preference_helper.dart';
 
+import '../blocs/inspection/inspection_cubit.dart';
 import '../services/navigation_service.dart';
 
 GetIt inject = GetIt.instance;
@@ -24,4 +25,5 @@ Future<void> setUpLocator() async {
   inject.registerFactory<LanguageSupportCubit>(
       () => LanguageSupportCubit(inject()));
   inject.registerFactory<SplashPageCubit>(() => SplashPageCubit(inject()));
+  inject.registerFactory<InspectionCubit>(() => InspectionCubit(inject()));
 }

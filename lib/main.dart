@@ -16,6 +16,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/blocs/inspection/inspection_cubit.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -79,6 +81,9 @@ class _MyAppState extends State<MyApp> {
         providers: [
           BlocProvider<LanguageSupportCubit>(create: (ctx) {
             return inject.get<LanguageSupportCubit>();
+          }),
+          BlocProvider<InspectionCubit>(create: (ctx) {
+            return inject.get<InspectionCubit>();
           }),
         ],
         child: BlocProvider(

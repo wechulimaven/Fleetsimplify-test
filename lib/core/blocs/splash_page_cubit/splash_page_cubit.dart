@@ -13,8 +13,7 @@ class SplashPageCubit extends Cubit<SplashPageState> {
   Future<void> checkAuthStatus() async {
     //add initialization logic here if any
     try {
-      var ownerDetails =
-          await sharedPreferenceService.getString(accessTokenKey);
+      var ownerDetails = await sharedPreferenceService.getString('Key');
       await Future.delayed(const Duration(seconds: 3));
       if (ownerDetails != null) {
         emit(const AuthStatus(loggedIn: true));
